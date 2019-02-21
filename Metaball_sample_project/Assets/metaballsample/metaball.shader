@@ -88,44 +88,6 @@ Shader "Butadiene/metaball"
 				}
 			return d1;
 			}
-
-
-
-
-			// The MIT License
-			// Copyright © 2013 Inigo Quilez
-			// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-			// https://www.shadertoy.com/view/ld2GRz
-
-			float4 material(float3 pos){
-			
-			float4 ballcol[6]={float4(0.5,0,0,1),
-									float4(0.0,0.5,0,1),
-									float4(0,0,0.5,1),
-									float4(0.25,0.25,0,1),
-									float4(0.25,0,0.25,1),
-									float4(0.0,0.25,0.25,1)};
-			float3 mate = float3(0,0,0);
-    		float w = 0.01;
-			// Making ball color
-			for (int i = 0; i < 6; ++i) {
-				
-				float x = clamp( (length( metaballvalue(i).xyz - pos )-metaballvalue(i).w)*10,0,1 ); 
-                float p = 1.0 - x*x*(3.0-2.0*x);
-                mate += p*float3(ballcol[i].xyz);
-                w += p;
-
-				}
-			// Making floor color
-			float x = clamp(  (pos.y-_ypos)*10,0,1 );
-			 float p = 1.0 - x*x*(3.0-2.0*x);
-			  mate += p*float3(0.1,0.1,0.1);
-              w += p;
-			 mate /= w;
-			return float4(mate,1);
-			}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			
 		
 		// Making distance function
 			float dist(float3 p)
@@ -209,7 +171,40 @@ Shader "Butadiene/metaball"
 				}
 				return clamp(res,0.0,1.0);
 			}
+			// The MIT License
+			// Copyright © 2013 Inigo Quilez
+			// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+			// https://www.shadertoy.com/view/ld2GRz
 
+			float4 material(float3 pos){
+			
+			float4 ballcol[6]={float4(0.5,0,0,1),
+									float4(0.0,0.5,0,1),
+									float4(0,0,0.5,1),
+									float4(0.25,0.25,0,1),
+									float4(0.25,0,0.25,1),
+									float4(0.0,0.25,0.25,1)};
+			float3 mate = float3(0,0,0);
+    		float w = 0.01;
+			// Making ball color
+			for (int i = 0; i < 6; ++i) {
+				
+				float x = clamp( (length( metaballvalue(i).xyz - pos )-metaballvalue(i).w)*10,0,1 ); 
+                float p = 1.0 - x*x*(3.0-2.0*x);
+                mate += p*float3(ballcol[i].xyz);
+                w += p;
+
+				}
+			// Making floor color
+			float x = clamp(  (pos.y-_ypos)*10,0,1 );
+			 float p = 1.0 - x*x*(3.0-2.0*x);
+			  mate += p*float3(0.1,0.1,0.1);
+              w += p;
+			 mate /= w;
+			return float4(mate,1);
+			}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			
 			//Phong reflection model ,Directional light
 			float4 lighting(float3 pos)
 			{	
