@@ -7,7 +7,7 @@ Shader "Butadiene/metaball"
 {
 	Properties
 	{
-		_ypos("floor high",float)=-0.25
+		_ypos("floor height",float)=-0.25
 		}
 	SubShader
 	{
@@ -68,9 +68,10 @@ Shader "Butadiene/metaball"
 			}
 			// Making ball distance function
 			float metaballone(float3 p, float i)
-			{
-				float3 ballpos = p-metaballvalue(i).xyz;
-				float scale =metaballvalue(i).w;
+			{	
+				float4 value = metaballvalue(i);
+				float3 ballpos = p-value.xyz;
+				float scale =value.w;
 				return  ball(ballpos,scale);
 			}
 
