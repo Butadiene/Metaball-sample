@@ -214,7 +214,7 @@ Shader "Butadiene/metaball"
 				pos =  mul(unity_ObjectToWorld,float4(pos,1)).xyz;
 				normal =  normalize(mul(unity_ObjectToWorld,float4(normal,0)).xyz);
 					
-				float3 ViewDir = normalize(pos-_WorldSpaceCameraPos);
+				float3 viewdir = normalize(pos-_WorldSpaceCameraPos);
 				half3 lightdir = -normalize(float3(_WorldSpaceLightPos0.xyz));
 				
 				float sha = softray(mpos,lightdir,3.3);
@@ -222,7 +222,7 @@ Shader "Butadiene/metaball"
 				
 				float NdotL = max(0,dot(normal,lightdir));
 				float3 R = -normalize(reflect(lightdir,normal));
-				float3 spec =pow(max(dot(R,-ViewDir),0),10);
+				float3 spec =pow(max(dot(R,-viewdir),0),10);
 
 				float4 col =  sha*(Color* NdotL+float4(spec,0));
 				return col;
