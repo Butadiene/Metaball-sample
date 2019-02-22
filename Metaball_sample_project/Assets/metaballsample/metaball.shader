@@ -78,7 +78,6 @@ Shader "Butadiene/metaball"
 			float metaball(float3 p)
 			{
 				float d1;
-				float pi = 0;
 				float d2 =  metaballone(p,0);
 				for (int i = 1; i < 6; ++i) {
 				
