@@ -186,21 +186,21 @@ Shader "Butadiene/metaball"
 									float4(0.25,0,0.25,1),
 									float4(0.0,0.25,0.25,1)};
 			float3 mate = float3(0,0,0);
-    		float w = 0.01;
+			float w = 0.01;
 			// Making ball color
 			for (int i = 0; i < 6; ++i) {
 				
 				float x = clamp( (length( metaballvalue(i).xyz - pos )-metaballvalue(i).w)*10,0,1 ); 
-                float p = 1.0 - x*x*(3.0-2.0*x);
-                mate += p*float3(ballcol[i].xyz);
-                w += p;
+				float p = 1.0 - x*x*(3.0-2.0*x);
+				mate += p*float3(ballcol[i].xyz);
+				w += p;
 
 				}
 			// Making floor color
 			float x = clamp(  (pos.y-_ypos)*10,0,1 );
-			 float p = 1.0 - x*x*(3.0-2.0*x);
-			  mate += p*float3(0.1,0.1,0.1);
-              w += p;
+			float p = 1.0 - x*x*(3.0-2.0*x);
+			mate += p*float3(0.1,0.1,0.1);
+			w += p;
 			 mate /= w;
 			return float4(mate,1);
 			}
