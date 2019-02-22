@@ -104,10 +104,10 @@ Shader "Butadiene/metaball"
 
 			float raymarch (float3 ro,float3 rd)
 			{
-				float previousRadius = 0.0;
+				float previousradius = 0.0;
 				float maxdistance = 3;
 				float outside = dist(ro) < 0 ? -1 : +1;
-				float pixelRadius = 0.02;
+				float pixelradius = 0.02;
 				float omega = 1.2;
 				float t =0;
 				float step = 0;
@@ -116,27 +116,27 @@ Shader "Butadiene/metaball"
 				float hit = 0.01;
 					for (int i = 0; i < 60; ++i) {
 
-						float Radius = outside*dist(ro+rd*t);
-						bool fail = omega>1 &&step>(abs(Radius)+abs(previousRadius));
+						float radius = outside*dist(ro+rd*t);
+						bool fail = omega>1 &&step>(abs(radius)+abs(previousradius));
 						if(fail){
 							step -= step *omega;
 							omega =1.0;
 						}
 						else{
-							step = omega * Radius;
+							step = omega * radius;
 						}
-						previousRadius = Radius;
-						float pixelt = Radius/t;
+						previousradius = radius;
+						float pixelt = radius/t;
 						if(!fail&&pixelt<minpixelt){
 							minpixelt = pixelt;
 							mint = t;
 						}
-						if(!fail&&pixelt<pixelRadius||t>maxdistance)
+						if(!fail&&pixelt<pixelradius||t>maxdistance)
 						break;
 						t += step;
 					}
 				
-					if ((t > maxdistance || minpixelt > pixelRadius)&&(mint>hit)){
+					if ((t > maxdistance || minpixelt > pixelradius)&&(mint>hit)){
 					return -1;
 					}
 					else{
