@@ -106,7 +106,7 @@ Shader "Butadiene/metaball"
 			{
 				
 				
-			float previousRadius = 0.02;
+			float previousRadius = 0.0;
 			float maxdistance = 3;
 			float outside = dist(ro) < 0 ? -1 : +1;
 			float pixelRadius = 0.02;
