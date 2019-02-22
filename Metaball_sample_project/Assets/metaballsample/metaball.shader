@@ -49,9 +49,9 @@ Shader "Butadiene/metaball"
 			
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 											
-			float smoothMin(float d1, float d2, float k){
-				float h = exp(-k * d1) + exp(-k * d2);
-				return -log(h) / k;
+			float smoothMin(float d1,float d2,float k)
+			{
+				return -log(exp(-k*d1)+exp(-k*d2))/k;
 			}
 						
 			// Base distance function
@@ -159,17 +159,15 @@ Shader "Butadiene/metaball"
 			// Making shadow
 			float softray( float3 ro, float3 rd , float hn)
 			{
-				float res = 1.0;
-				float t = 0.0005;
-				float h = 1.0;
-			
-				for( int i=0; i<20; i++ )
-				{
-					h = dist(ro + rd*t);
-					res = min( res, hn*h/t );
-					t += clamp( h, 0.02, 2.0 );
+				float t = 0.000001;
+				float jt = 0.0;
+				float res = 1;
+				for (int i = 0; i < 20; ++i) {
+					jt = dist(ro+rd*t);
+					res = min(res,jt*hn/t);
+					t = t+ clamp(0.02,2,jt);
 				}
-				return clamp(res,0.0,1.0);
+				return saturate(res);
 			}
 			// The MIT License
 			// Copyright © 2013 Inigo Quilez
@@ -220,11 +218,10 @@ Shader "Butadiene/metaball"
 				float sha = softray(mpos,lightdir,40);
 				float4 Color = material(mpos);
 				
-				float NdotL = max(0, dot (normal, lightdir));
-				float3 R = normalize( -lightdir + 2.0 * normal * NdotL );
-					
-				float3 spec = pow(max(0, dot(R, -ViewDir)), 10.0);
-					
+				float NdotL = max(0,dot(normal,lightdir));
+				float3 R = -normalize(reflect(lightdir,normal));
+				float3 spec =pow(max(dot(R,-ViewDir),0),10);
+
 				float4 col =  sha*Color* NdotL+float4(spec,0);
 				return col;
 			}
