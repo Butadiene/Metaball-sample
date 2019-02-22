@@ -102,8 +102,6 @@ Shader "Butadiene/metaball"
 
 			//enhanced sphere tracing  http://erleuchtet.org/~cupe/permanent/enhanced_sphere_tracing.pdf
 
-
- 
 			float raymarch (float3 ro,float3 rd)
 			{
 				
@@ -137,7 +135,6 @@ Shader "Butadiene/metaball"
 					}
 					if(!fall&&pixelt<pixelRadius||t>maxdistance)
 					break;
-					
 					t += step;
 				}
 				
