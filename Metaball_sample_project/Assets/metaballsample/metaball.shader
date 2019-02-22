@@ -266,7 +266,7 @@ Shader "Butadiene/metaball"
 			pout frag (v2f i) 
 			{
 				float3 ro = mul( unity_WorldToObject,float4(_WorldSpaceCameraPos,1)).xyz;
-				float3 rd = normalize(mul( unity_WorldToObject,float4(i.pos,1))-mul( unity_WorldToObject,float4(_WorldSpaceCameraPos,1)).xyz); // rd is ray direction/floattor
+				float3 rd = normalize(mul( unity_WorldToObject,float4(i.pos,1)).xyz-mul( unity_WorldToObject,float4(_WorldSpaceCameraPos,1)).xyz); 
 				float t = raymarch(ro,rd);
 				fixed4 col;
 
@@ -290,6 +290,4 @@ Shader "Butadiene/metaball"
 		
 	}
 }
-
-
 
