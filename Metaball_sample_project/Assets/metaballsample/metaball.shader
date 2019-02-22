@@ -199,7 +199,7 @@ Shader "Butadiene/metaball"
 			// Making floor color
 			float x = clamp(  (pos.y-_ypos)*10,0,1 );
 			float p = 1.0 - x*x*(3.0-2.0*x);
-			mate += p*float3(0.1,0.1,0.1);
+			mate += p*float3(0.2,0.2,0.2);
 			w += p;
 			 mate /= w;
 			return float4(mate,1);
@@ -218,7 +218,7 @@ Shader "Butadiene/metaball"
 				float3 ViewDir = normalize(pos-_WorldSpaceCameraPos);
 				half3 lightdir = -normalize(float3(_WorldSpaceLightPos0.xyz));
 				
-				float sha = softray(mpos,lightdir,10);
+				float sha = softray(mpos,lightdir,3.3);
 				float4 Color = material(mpos);
 				
 				float NdotL = max(0,dot(normal,lightdir));
