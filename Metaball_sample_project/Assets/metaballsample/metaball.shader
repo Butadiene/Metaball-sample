@@ -8,7 +8,6 @@ Shader "Butadiene/metaball"
 	Properties
 	{
 		_ypos("floor high",float)=-0.25
-
 		}
 	SubShader
 	{
@@ -26,7 +25,7 @@ Shader "Butadiene/metaball"
 			// Copyright © 2013 Inigo Quilez
 			// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-			
+			///////////////////////////////////////////////////////////////////////
 			float hash(float2 p)  
 			{
 				p  = 50.0*frac( p*0.3183099 + float2(0.71,0.113));
@@ -44,10 +43,8 @@ Shader "Butadiene/metaball"
 								 hash( i + float2(1.0,0.0) ), u.x),
 							lerp( hash( i + float2(0.0,1.0) ), 
 								 hash( i + float2(1.0,1.0) ), u.x), u.y);
-			}
-
-			
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			}			
+			///////////////////////////////////////////////////////////////////////
 											
 			float smoothMin(float d1,float d2,float k)
 			{
@@ -62,34 +59,37 @@ Shader "Butadiene/metaball"
 
 			
 			// Making ball status
-			float4 metaballvalue(float i){
+			float4 metaballvalue(float i)
+			{
 				float kt = 3*_Time.y*(0.1+0.01*i);
 				float3 ballpos = 0.3*float3(noise(float2(i,i)+kt),noise(float2(i+10,i*20)+kt),noise(float2(i*20,i+20)+kt));
 				float scale = 0.05+0.02*hash(float2(i,i));
 				return  float4(ballpos,scale);
 			}
 			// Making ball distance function
-			float metaballone(float3 p, float i){
+			float metaballone(float3 p, float i)
+			{
 				float3 ballpos = p-metaballvalue(i).xyz;
 				float scale =metaballvalue(i).w;
 				return  ball(ballpos,scale);
 			}
 
 			//Making metaballs distance function
-			float metaball(float3 p){
-			float d1;
-			float pi = 0;
-			float d2 =  metaballone(p,0);
-			for (int i = 0; i < 6; ++i) {
+			float metaball(float3 p)
+			{
+				float d1;
+				float pi = 0;
+				float d2 =  metaballone(p,0);
+				for (int i = 1; i < 6; ++i) {
 				
-				d1 = metaballone(p,i);
-				d1 = smoothMin(d1,d2,20);
-				d2 =d1;
-				}
-			return d1;
+					d1 = metaballone(p,i);
+					d1 = smoothMin(d1,d2,20);
+					d2 =d1;
+					}
+				return d1;
 			}
 		
-		// Making distance function
+			// Making distance function
 			float dist(float3 p)
 			{	
 				float y = p.y;
@@ -104,45 +104,44 @@ Shader "Butadiene/metaball"
 
 			float raymarch (float3 ro,float3 rd)
 			{
-				
-				
-			float previousRadius = 0.0;
-			float maxdistance = 3;
-			float outside = dist(ro) < 0 ? -1 : +1;
-			float pixelRadius = 0.02;
-			float omega = 1.2;
-			float t =0;
-			float step = 0;
-			float minpixelt =999999999;
-			float mint = 0;
-			float hit = 0.01;
-				for (int i = 0; i < 60; ++i) {
+				float previousRadius = 0.0;
+				float maxdistance = 3;
+				float outside = dist(ro) < 0 ? -1 : +1;
+				float pixelRadius = 0.02;
+				float omega = 1.2;
+				float t =0;
+				float step = 0;
+				float minpixelt =999999999;
+				float mint = 0;
+				float hit = 0.01;
+					for (int i = 0; i < 60; ++i) {
 
-					float Radius = outside*dist(ro+rd*t);
-					bool fall = omega>1 &&step>(abs(Radius)+abs(previousRadius));
-					if(fall){
-						step -= step *omega;
-						omega =0.8;
+						float Radius = outside*dist(ro+rd*t);
+						bool fail = omega>1 &&step>(abs(Radius)+abs(previousRadius));
+						if(fail){
+							step -= step *omega;
+							omega =1.0;
+						}
+						else{
+							step = omega * Radius;
+						}
+						previousRadius = Radius;
+						float pixelt = Radius/t;
+						if(!fail&&pixelt<minpixelt){
+							minpixelt = pixelt;
+							mint = t;
+						}
+						if(!fail&&pixelt<pixelRadius||t>maxdistance)
+						break;
+						t += step;
+					}
+				
+					if ((t > maxdistance || minpixelt > pixelRadius)&&(mint>hit)){
+					return -1;
 					}
 					else{
-						step = omega * Radius;
+					return mint;
 					}
-					previousRadius = Radius;
-					float pixelt = Radius/t;
-					if(!fall&&pixelt<minpixelt){
-						minpixelt = pixelt;
-						mint = t;
-					}
-					if(!fall&&pixelt<pixelRadius||t>maxdistance)
-					break;
-					t += step;
-				}
-				
-				if ((t > maxdistance || minpixelt > pixelRadius)&&(mint>hit)){
-				return -1;
-				}else{
-				return mint;
-				}
 				
 			}
 
@@ -152,13 +151,15 @@ Shader "Butadiene/metaball"
 			// https://www.shadertoy.com/view/Xds3zN
 
 			//Tetrahedron technique  http://iquilezles.org/www/articles/normalsSDF/normalsSDF.htm
-			float3 getnormal( in float3 p){
+			float3 getnormal( in float3 p)
+			{
 				static const float2 e = float2(0.5773,-0.5773)*0.0001;
 				float3 nor = normalize( e.xyy*dist(p+e.xyy) + e.yyx*dist(p+e.yyx) + e.yxy*dist(p+e.yxy ) + e.xxx*dist(p+e.xxx));
 				nor = normalize(float3(nor));
 				return nor ;
 			}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////////
+
 			// Making shadow
 			float softray( float3 ro, float3 rd , float hn)
 			{
@@ -172,39 +173,38 @@ Shader "Butadiene/metaball"
 				}
 				return saturate(res);
 			}
+			
 			// The MIT License
 			// Copyright © 2013 Inigo Quilez
 			// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			// https://www.shadertoy.com/view/ld2GRz
 
-			float4 material(float3 pos){
-			
-			float4 ballcol[6]={float4(0.5,0,0,1),
-							float4(0.0,0.5,0,1),
-							float4(0,0,0.5,1),
-							float4(0.25,0.25,0,1),
-							float4(0.25,0,0.25,1),
-							float4(0.0,0.25,0.25,1)};
-			float3 mate = float3(0,0,0);
-			float w = 0.01;
-			// Making ball color
-			for (int i = 0; i < 6; ++i) {
-				
-				float x = clamp( (length( metaballvalue(i).xyz - pos )-metaballvalue(i).w)*10,0,1 ); 
+			float4 material(float3 pos)
+			{
+				float4 ballcol[6]={float4(0.5,0,0,1),
+								float4(0.0,0.5,0,1),
+								float4(0,0,0.5,1),
+								float4(0.25,0.25,0,1),
+								float4(0.25,0,0.25,1),
+								float4(0.0,0.25,0.25,1)};
+				float3 mate = float3(0,0,0);
+				float w = 0.01;
+					// Making ball color
+					for (int i = 0; i < 6; ++i) {
+						float x = clamp( (length( metaballvalue(i).xyz - pos )-metaballvalue(i).w)*10,0,1 ); 
+						float p = 1.0 - x*x*(3.0-2.0*x);
+						mate += p*float3(ballcol[i].xyz);
+						w += p;
+					}
+				// Making floor color
+				float x = clamp(  (pos.y-_ypos)*10,0,1 );
 				float p = 1.0 - x*x*(3.0-2.0*x);
-				mate += p*float3(ballcol[i].xyz);
+				mate += p*float3(0.2,0.2,0.2);
 				w += p;
-
-				}
-			// Making floor color
-			float x = clamp(  (pos.y-_ypos)*10,0,1 );
-			float p = 1.0 - x*x*(3.0-2.0*x);
-			mate += p*float3(0.2,0.2,0.2);
-			w += p;
-			 mate /= w;
-			return float4(mate,1);
+				mate /= w;
+				return float4(mate,1);
 			}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////
 			
 			//Phong reflection model ,Directional light
 			float4 lighting(float3 pos)
@@ -279,7 +279,7 @@ Shader "Butadiene/metaball"
 				}
 				pout o;
 				o.pixel =col;
-				float4 curp = mul(UNITY_MATRIX_P,mul(UNITY_MATRIX_MV,float4(ro+rd*t,1)));
+				float4 curp = UnityObjectToClipPos(float4(ro+rd*t,1));
 				o.depth = (curp.z)/(curp.w); //Drawing depth
 
 				return o;
