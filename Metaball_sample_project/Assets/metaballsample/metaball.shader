@@ -218,14 +218,14 @@ Shader "Butadiene/metaball"
 				float3 ViewDir = normalize(pos-_WorldSpaceCameraPos);
 				half3 lightdir = -normalize(float3(_WorldSpaceLightPos0.xyz));
 				
-				float sha = softray(mpos,lightdir,40);
+				float sha = softray(mpos,lightdir,10);
 				float4 Color = material(mpos);
 				
 				float NdotL = max(0,dot(normal,lightdir));
 				float3 R = -normalize(reflect(lightdir,normal));
 				float3 spec =pow(max(dot(R,-ViewDir),0),10);
 
-				float4 col =  sha*Color* NdotL+float4(spec,0);
+				float4 col =  sha*(Color* NdotL+float4(spec,0));
 				return col;
 			}
 
