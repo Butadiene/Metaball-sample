@@ -97,7 +97,7 @@ Shader "Butadiene/metaball"
 				float d2 = y-(_ypos); //For floor
 			    d1 = smoothMin(d1,d2,20);
 				return d1;
-				}
+			}
 
 
 			//enhanced sphere tracing  http://erleuchtet.org/~cupe/permanent/enhanced_sphere_tracing.pdf
@@ -180,11 +180,11 @@ Shader "Butadiene/metaball"
 			float4 material(float3 pos){
 			
 			float4 ballcol[6]={float4(0.5,0,0,1),
-									float4(0.0,0.5,0,1),
-									float4(0,0,0.5,1),
-									float4(0.25,0.25,0,1),
-									float4(0.25,0,0.25,1),
-									float4(0.0,0.25,0.25,1)};
+							float4(0.0,0.5,0,1),
+							float4(0,0,0.5,1),
+							float4(0.25,0.25,0,1),
+							float4(0.25,0,0.25,1),
+							float4(0.0,0.25,0.25,1)};
 			float3 mate = float3(0,0,0);
 			float w = 0.01;
 			// Making ball color
