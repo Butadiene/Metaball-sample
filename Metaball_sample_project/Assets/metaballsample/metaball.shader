@@ -102,52 +102,57 @@ Shader "Butadiene/metaball"
 
 			//enhanced sphere tracing  http://erleuchtet.org/~cupe/permanent/enhanced_sphere_tracing.pdf
 
+
+ 
 			float raymarch (float3 ro,float3 rd)
 			{
-			
-				float t_min = 0;
-				float  t_max =3;
-				float pixelRadius= 0.02;
-				float omega = 1.2;
-				float t = t_min;
-				float candidate_error = 999999999;
-				float candidate_t = t_min;
-				float previousRadius = 0;
-				float stepLength = 0;
-				float functionSign = dist(ro) < 0 ? -1 : +1;
-			
-			
+				
+				
+			float previousRadius = 0.02;
+			float maxdistance = 3;
+			float outside = dist(ro) < 0 ? -1 : +1;
+			float pixelRadius = 0.02;
+			float omega = 1.2;
+			float t =0;
+			float step = 0;
+			float minpixelt =999999999;
+			float mint = 0;
+			float hit = 0.01;
 				for (int i = 0; i < 60; ++i) {
-					
-					float signedRadius = functionSign * dist(rd*t + ro);
-					float radius = abs(signedRadius);
-					bool sorFail = omega > 1 &&
-					(radius + previousRadius) < stepLength;
-					if (sorFail) {
-					stepLength -= omega * stepLength;
-					omega = 0.8;
-					} else {
-					stepLength = signedRadius * omega;
+
+					float Radius = outside*dist(ro+rd*t);
+					bool fall = omega>1 &&step>(abs(Radius)+abs(previousRadius));
+					if(fall){
+						step -= step *omega;
+						omega =0.8;
 					}
-					previousRadius = radius;
-					float error = radius / t;
-					if (!sorFail && error < candidate_error) {
-					candidate_t = t;
-					candidate_error = error;
+					else{
+						step = omega * Radius;
 					}
-					if (!sorFail && error < pixelRadius || t > t_max)
+					previousRadius = Radius;
+					float pixelt = Radius/t;
+					if(!fall&&pixelt<minpixelt){
+						minpixelt = pixelt;
+						mint = t;
+					}
+					if(!fall&&pixelt<pixelRadius||t>maxdistance)
 					break;
-					t += stepLength;
 					
+					t += step;
 				}
 				
-				if ((t > t_max || candidate_error > pixelRadius)&&(candidate_t>0.01)){
+				if ((t > maxdistance || minpixelt > pixelRadius)&&(mint>hit)){
 				return -1;
 				}else{
-				return candidate_t;
+				return mint;
 				}
-
+				
 			}
+
+			// The MIT License
+			// Copyright © 2013 Inigo Quilez
+			// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+			// https://www.shadertoy.com/view/Xds3zN
 
 			//Tetrahedron technique  http://iquilezles.org/www/articles/normalsSDF/normalsSDF.htm
 			float3 getnormal( in float3 p){
@@ -156,6 +161,7 @@ Shader "Butadiene/metaball"
 				nor = normalize(float3(nor));
 				return nor ;
 			}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// Making shadow
 			float softray( float3 ro, float3 rd , float hn)
 			{
