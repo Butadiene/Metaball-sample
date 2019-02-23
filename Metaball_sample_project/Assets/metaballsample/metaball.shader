@@ -267,7 +267,7 @@ Shader "Butadiene/metaball"
 				float3 ro = mul( unity_WorldToObject,float4(_WorldSpaceCameraPos,1)).xyz;
 				float3 rd = normalize(mul( unity_WorldToObject,float4(i.pos,1)).xyz-mul( unity_WorldToObject,float4(_WorldSpaceCameraPos,1)).xyz); 
 				float t = raymarch(ro,rd);
-				fixed4 col;
+				fixed4 col = 0;
 
 				if (t==-1) {
 				clip(-1);
