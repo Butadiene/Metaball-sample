@@ -108,7 +108,7 @@ Shader "Butadiene/metaball"
 				float outside = dist(ro) < 0 ? -1 : +1;
 				float pixelradius = 0.02;
 				float omega = 1.2;
-				float t =0;
+				float t = 0.000001;
 				float step = 0;
 				float minpixelt =999999999;
 				float mint = 0;
