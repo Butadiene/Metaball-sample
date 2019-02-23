@@ -11,7 +11,7 @@ Shader "Butadiene/metaball"
 		}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque" }
+		Tags { "RenderType"="Opaque" "LightMode"="ForwardBase" }
 		LOD 100
 		Cull Front
 		Pass
@@ -215,7 +215,7 @@ Shader "Butadiene/metaball"
 				normal =  normalize(mul(unity_ObjectToWorld,float4(normal,0)).xyz);
 					
 				float3 viewdir = normalize(pos-_WorldSpaceCameraPos);
-				half3 lightdir = -normalize(float3(_WorldSpaceLightPos0.xyz));
+				half3 lightdir = normalize(UnityWorldSpaceLightDir(pos));
 				
 				float sha = softray(mpos,lightdir,3.3);
 				float4 Color = material(mpos);
